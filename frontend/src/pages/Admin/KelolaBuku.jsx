@@ -1,347 +1,398 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { bookService } from '../../services/bookService.js';
+import { categoryService } from '../../services/categoryService.js';
 import AdminNavbar from '../../components/AdminNavbar.jsx';
-import '../Admin/style/KelolaBuku.css';
-
-const API = 'http://localhost:8000/api';
+import StockBadge from '../../components/StockBadge.jsx';
+import ConfirmModal from '../../components/ConfirmModal.jsx';
+import BookDetailModal from './BookDetailModal.jsx';
+import KelolaKategori from './KelolaKategori.jsx';
+import './style/KelolaBuku.css';
 
 export default function KelolaBuku() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [error, setError] = useState('');
-  const [editingId, setEditingId] = useState(null);
-  const [editForm, setEditForm] = useState({});
+  const [meta, setMeta] = useState({ current_page: 1, last_page: 1, total: 0 });
 
-  const loadBooks = async () => {
+  // Filter & Search states
+  const [search, setSearch] = useState('');
+  const [kategoriFilter, setKategoriFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState(searchParams.get('status') || '');
+  const [page, setPage] = useState(1);
+
+  // Quick edit stok state
+  const [editingStockId, setEditingStockId] = useState(null);
+  const [quickStockVal, setQuickStockVal] = useState('');
+
+  // Modals
+  const [detailBook, setDetailBook] = useState(null);
+  const [deletingBook, setDeletingBook] = useState(null);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+
+  // Alerts
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const fetchCategories = async () => {
     try {
-      const res = await fetch(`${API}/books`, {
-        headers: { Accept: 'application/json' },
+      const res = await categoryService.getCategories();
+      setCategories(res.data || []);
+    } catch {
+      // Ignored
+    }
+  };
+
+  const fetchBooks = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await bookService.getBooks({
+        search: search.trim(),
+        kategori_id: kategoriFilter,
+        status: statusFilter,
+        page,
+        per_page: 10,
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.message || 'Gagal mengambil data buku.');
+      setBooks(res.data || []);
+      if (res.meta) {
+        setMeta(res.meta);
       }
-
-      setBooks(data.data || []);
-      setError('');
     } catch (err) {
-      setError(err.message || 'Tidak bisa terhubung ke server.');
+      setError(err.message || 'Gagal mengambil data buku.');
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        const [booksRes, categoriesRes] = await Promise.all([
-          fetch(`${API}/books`, {
-            headers: { Accept: 'application/json' },
-          }),
-          fetch(`${API}/categories`, {
-            headers: { Accept: 'application/json' },
-          }),
-        ]);
-
-        const booksData = await booksRes.json();
-        const categoriesData = await categoriesRes.json();
-
-        if (!booksRes.ok) {
-          throw new Error(
-            booksData.message || 'Gagal mengambil data buku.'
-          );
-        }
-
-        if (!categoriesRes.ok) {
-          throw new Error(
-            categoriesData.message || 'Gagal mengambil data kategori.'
-          );
-        }
-
-        setBooks(booksData.data || []);
-        setCategories(categoriesData.data || []);
-        setError('');
-      } catch (err) {
-        setError(err.message || 'Tidak bisa terhubung ke server.');
-      }
-    };
-
-    loadData();
+    fetchCategories();
   }, []);
 
-  const handleEdit = (book) => {
-    setError('');
-    setEditingId(book.id);
+  // Fetch buku dengan debounce pada search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchBooks();
+    }, 300);
 
-    setEditForm({
-      isbn: book.isbn ?? '',
-      judul: book.judul ?? '',
-      penulis: book.penulis ?? '',
-      penerbit: book.penerbit ?? '',
-      tahun_terbit: book.tahun_terbit ?? '',
-      kategori_id: String(book.kategori_id ?? ''),
-      stok: book.stok ?? 0,
-      deskripsi: book.deskripsi ?? '',
-      cover_id: book.cover_id ?? '',
-    });
+    return () => clearTimeout(timer);
+  }, [search, kategoriFilter, statusFilter, page]);
+
+  // Handle Quick Stock Update
+  const handleStartEditStock = (book) => {
+    setEditingStockId(book.id);
+    setQuickStockVal(book.stok);
   };
 
-  const handleChange = (e) => {
-    setEditForm({
-      ...editForm,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSave = async () => {
-    setError('');
-
-    try {
-      const res = await fetch(`${API}/books/${editingId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify({
-          ...editForm,
-          cover_id: editForm.cover_id || null,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(
-          data.message ||
-            (data.errors
-              ? Object.values(data.errors).flat().join(', ')
-              : 'Gagal memperbarui data buku.')
-        );
-        return;
-      }
-
-      setEditingId(null);
-      await loadBooks();
-    } catch {
-      setError('Tidak bisa terhubung ke server.');
-    }
-  };
-
-  const handleDelete = async (id) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus buku ini?')) {
+  const handleSaveStock = async (bookId) => {
+    if (quickStockVal === '' || Number(quickStockVal) < 0) {
+      setError('Jumlah stok harus berupa angka positif.');
       return;
     }
 
-    setError('');
-
     try {
-      const res = await fetch(`${API}/books/${id}`, {
-        method: 'DELETE',
-        headers: { Accept: 'application/json' },
-      });
+      await bookService.updateStock(bookId, quickStockVal);
+      setEditingStockId(null);
+      setSuccess('Stok berhasil diperbarui');
+      fetchBooks();
+    } catch (err) {
+      setError(err.message || 'Gagal mengubah stok.');
+    }
+  };
 
-      const data = await res.json();
+  // Handle Delete
+  const handleDeleteBook = async () => {
+    if (!deletingBook) return;
+    setError('');
+    setSuccess('');
+    try {
+      await bookService.deleteBook(deletingBook.id);
+      setSuccess(`Buku "${deletingBook.judul}" berhasil dihapus.`);
+      setDeletingBook(null);
+      fetchBooks();
+    } catch (err) {
+      setError(err.message || 'Gagal menghapus buku.');
+      setDeletingBook(null);
+    }
+  };
 
-      if (!res.ok) {
-        setError(data.message || 'Gagal menghapus data buku.');
-        return;
-      }
-
-      if (editingId === id) {
-        setEditingId(null);
-      }
-
-      await loadBooks();
-    } catch {
-      setError('Tidak bisa terhubung ke server.');
+  // Handle Detail
+  const handleOpenDetail = async (bookId) => {
+    try {
+      const res = await bookService.getBookById(bookId);
+      setDetailBook(res.data);
+    } catch (err) {
+      setError(err.message || 'Gagal memuat detail buku');
     }
   };
 
   return (
-    <>
+    <div className="kelola-buku-page">
       <AdminNavbar />
 
-      <div className="books-page">
-        <div className="books-header">
+      <main className="kelola-buku-container">
+        <header className="kelola-buku-header">
           <div>
-            <h1>Kelola Buku</h1>
-            <p>Kelola informasi dan data buku perpustakaan.</p>
+            <h1>Kelola Buku Perpustakaan</h1>
+            <p>Kelola katalog buku, stok eksemplar, dan pantau status ketersediaan buku secara langsung.</p>
           </div>
 
-          <button
-            className="books-add-button"
-            onClick={() => navigate('/admin/buku/tambah')}
-          >
-            <span>+</span> Tambah Buku
-          </button>
-        </div>
+          <div className="kelola-buku-header-actions">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => setIsCategoryModalOpen(true)}
+            >
+              🏷️ Kelola Kategori
+            </button>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={() => navigate('/admin/buku/tambah')}
+            >
+              ➕ Tambah Buku
+            </button>
+          </div>
+        </header>
 
-        {error && <div className="books-error">{error}</div>}
+        {error && <div className="alert-box error-box">{error}</div>}
+        {success && <div className="alert-box success-box">{success}</div>}
 
-        <div className="books-content">
-          <div className="books-content-header">
-            <div>
-              <h2>Daftar Buku</h2>
-              <p>Jumlah buku: {books.length}</p>
-            </div>
+        {/* Filter Bar */}
+        <section className="kelola-buku-filter-card">
+          <div className="filter-group-search">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Cari judul, penulis, penerbit, atau ISBN..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setPage(1);
+              }}
+            />
+            {search && (
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={() => setSearch('')}
+              >
+                ✕
+              </button>
+            )}
           </div>
 
-          <div className="books-table-wrapper">
+          <div className="filter-group-dropdowns">
+            <select
+              value={kategoriFilter}
+              onChange={(e) => {
+                setKategoriFilter(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">Semua Kategori</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.nama_kategori}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setPage(1);
+              }}
+            >
+              <option value="">Semua Status</option>
+              <option value="tersedia">Tersedia</option>
+              <option value="habis">Habis</option>
+            </select>
+          </div>
+        </section>
+
+        {/* Books Table */}
+        <section className="kelola-buku-table-card">
+          <div className="table-responsive">
             <table className="books-table">
               <thead>
                 <tr>
-                  <th>No</th>
-                  <th>ISBN</th>
-                  <th>Judul Buku</th>
-                  <th>Penulis</th>
-                  <th>Penerbit</th>
-                  <th>Tahun</th>
+                  <th>Informasi Buku</th>
                   <th>Kategori</th>
-                  <th>Stok</th>
-                  <th>Opsi</th>
+                  <th>ISBN</th>
+                  <th>Tahun</th>
+                  <th>Stok & Status</th>
+                  <th style={{ textAlign: 'right' }}>Aksi</th>
                 </tr>
               </thead>
-
               <tbody>
-                {books.length === 0 ? (
+                {loading ? (
                   <tr>
-                    <td colSpan="9" className="books-empty">
-                      Belum ada data buku.
+                    <td colSpan="6" className="table-state-cell">
+                      <div className="table-loading-spinner" />
+                      Memuat daftar buku...
                     </td>
                   </tr>
-                ) : (
-                  books.map((book, index) =>
-                    book.id === editingId ? (
-                      <tr key={book.id} className="books-edit-row">
-                        <td>{index + 1}</td>
-                        <td>
-                          <input
-                            className="books-edit-input"
-                            name="isbn"
-                            value={editForm.isbn}
-                            onChange={handleChange}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            className="books-edit-input"
-                            name="judul"
-                            value={editForm.judul}
-                            onChange={handleChange}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            className="books-edit-input"
-                            name="penulis"
-                            value={editForm.penulis}
-                            onChange={handleChange}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            className="books-edit-input"
-                            name="penerbit"
-                            value={editForm.penerbit}
-                            onChange={handleChange}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            className="books-edit-input"
-                            name="tahun_terbit"
-                            type="number"
-                            value={editForm.tahun_terbit}
-                            onChange={handleChange}
-                          />
-                        </td>
-                        <td>
-                          <select
-                            className="books-edit-input"
-                            name="kategori_id"
-                            value={editForm.kategori_id}
-                            onChange={handleChange}
+                ) : books.length > 0 ? (
+                  books.map((b) => (
+                    <tr key={b.id}>
+                      <td className="book-info-cell">
+                        <div className="book-title-row">
+                          <span className="book-title">{b.judul}</span>
+                          <span className="book-author">oleh {b.penulis}</span>
+                        </div>
+                        <span className="book-publisher">{b.penerbit}</span>
+                      </td>
+
+                      <td>
+                        <span className="category-pill">{b.kategori}</span>
+                      </td>
+
+                      <td>
+                        <code className="isbn-code">{b.isbn}</code>
+                      </td>
+
+                      <td>{b.tahun_terbit}</td>
+
+                      <td>
+                        {editingStockId === b.id ? (
+                          <div className="quick-stock-edit">
+                            <input
+                              type="number"
+                              min="0"
+                              value={quickStockVal}
+                              onChange={(e) => setQuickStockVal(e.target.value)}
+                              autoFocus
+                            />
+                            <button
+                              type="button"
+                              className="stock-save-btn"
+                              onClick={() => handleSaveStock(b.id)}
+                            >
+                              ✓
+                            </button>
+                            <button
+                              type="button"
+                              className="stock-cancel-btn"
+                              onClick={() => setEditingStockId(null)}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        ) : (
+                          <div
+                            className="stock-cell-clickable"
+                            title="Klik untuk ubah stok cepat"
+                            onClick={() => handleStartEditStock(b)}
                           >
-                            <option value="">Pilih kategori</option>
-                            {categories.map((category) => (
-                              <option
-                                key={category.id}
-                                value={category.id}
-                              >
-                                {category.nama_kategori}
-                              </option>
-                            ))}
-                          </select>
-                        </td>
-                        <td>
-                          <input
-                            className="books-edit-input"
-                            name="stok"
-                            type="number"
-                            min="0"
-                            value={editForm.stok}
-                            onChange={handleChange}
-                          />
-                        </td>
-                        <td>
-                          <div className="books-actions">
-                            <button
-                              className="books-save-button"
-                              onClick={handleSave}
-                            >
-                              Simpan
-                            </button>
-                            <button
-                              className="books-cancel-button"
-                              onClick={() => setEditingId(null)}
-                            >
-                              Batal
-                            </button>
+                            <StockBadge
+                              stokTersedia={b.stok_tersedia}
+                              stokTotal={b.stok}
+                              status={b.status_ketersediaan}
+                            />
+                            <span className="stock-edit-hint">✎</span>
                           </div>
-                        </td>
-                      </tr>
-                    ) : (
-                      <tr key={book.id}>
-                        <td>{index + 1}</td>
-                        <td>{book.isbn}</td>
-                        <td className="books-title">{book.judul}</td>
-                        <td>{book.penulis}</td>
-                        <td>{book.penerbit}</td>
-                        <td>{book.tahun_terbit}</td>
-                        <td>
-                          <span className="books-category">
-                            {book.kategori}
-                          </span>
-                        </td>
-                        <td>{book.stok}</td>
-                        <td>
-                          <div className="books-actions">
-                            <button
-                              className="books-edit-button"
-                              onClick={() => handleEdit(book)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="books-delete-button"
-                              onClick={() => handleDelete(book.id)}
-                            >
-                              Hapus
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  )
+                        )}
+                      </td>
+
+                      <td className="book-actions-cell">
+                        <button
+                          type="button"
+                          className="btn-action view"
+                          title="Lihat Detail"
+                          onClick={() => handleOpenDetail(b.id)}
+                        >
+                          Detail
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-action edit"
+                          title="Edit Informasi Buku"
+                          onClick={() => navigate(`/admin/buku/edit/${b.id}`)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-action delete"
+                          title="Hapus Buku"
+                          onClick={() => setDeletingBook(b)}
+                        >
+                          Hapus
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="table-state-cell">
+                      <p>Tidak ada buku yang sesuai dengan filter atau pencarian.</p>
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-    </>
+
+          {/* Pagination */}
+          {meta.last_page > 1 && (
+            <div className="pagination-bar">
+              <span className="pagination-info">
+                Menampilkan halaman {meta.current_page} dari {meta.last_page} (Total {meta.total} buku)
+              </span>
+              <div className="pagination-controls">
+                <button
+                  type="button"
+                  disabled={page <= 1}
+                  onClick={() => setPage(page - 1)}
+                >
+                  Sebelumnya
+                </button>
+                <span className="page-current">{meta.current_page}</span>
+                <button
+                  type="button"
+                  disabled={page >= meta.last_page}
+                  onClick={() => setPage(page + 1)}
+                >
+                  Selanjutnya
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      </main>
+
+      {/* Modal Detail Buku */}
+      <BookDetailModal
+        book={detailBook}
+        isOpen={!!detailBook}
+        onClose={() => setDetailBook(null)}
+      />
+
+      {/* Modal Kelola Kategori */}
+      <KelolaKategori
+        isOpen={isCategoryModalOpen}
+        onClose={() => setIsCategoryModalOpen(false)}
+        onCategoryUpdated={() => {
+          fetchCategories();
+          fetchBooks();
+        }}
+      />
+
+      {/* Modal Hapus Buku */}
+      <ConfirmModal
+        isOpen={!!deletingBook}
+        title="Konfirmasi Hapus Buku"
+        message={`Apakah Anda yakin ingin menghapus buku "${deletingBook?.judul}"? Buku yang sedang memiliki peminjaman aktif tidak dapat dihapus.`}
+        onConfirm={handleDeleteBook}
+        onCancel={() => setDeletingBook(null)}
+        confirmText="Hapus Sekarang"
+      />
+    </div>
   );
 }

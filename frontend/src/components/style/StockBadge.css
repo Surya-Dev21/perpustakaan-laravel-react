@@ -1,0 +1,48 @@
+.stock-badge-container {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.stock-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.stock-badge-available {
+  background-color: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.stock-badge-available .stock-dot {
+  background-color: #10b981;
+}
+
+.stock-badge-empty {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.stock-badge-empty .stock-dot {
+  background-color: #ef4444;
+}
+
+.stock-count {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 500;
+}

@@ -1,0 +1,602 @@
+{
+  "communities": {
+    "0": [
+      "backend_app_http_controllers_api_authcontroller",
+      "backend_app_http_controllers_api_authcontroller_authcontroller",
+      "backend_app_http_controllers_api_authcontroller_authcontroller_login",
+      "backend_app_http_controllers_api_authcontroller_authcontroller_register",
+      "backend_app_http_controllers_api_bookcontroller",
+      "backend_app_http_controllers_api_bookcontroller_bookcontroller",
+      "backend_app_http_controllers_api_bookcontroller_bookcontroller_destroy",
+      "backend_app_http_controllers_api_bookcontroller_bookcontroller_index",
+      "backend_app_http_controllers_api_bookcontroller_bookcontroller_show",
+      "backend_app_http_controllers_api_bookcontroller_bookcontroller_store",
+      "backend_app_http_controllers_api_bookcontroller_bookcontroller_update",
+      "backend_app_http_controllers_api_bukucontroller_bukucontroller",
+      "backend_app_http_controllers_api_bukucontroller_bukucontroller_destroy",
+      "backend_app_http_controllers_api_bukucontroller_bukucontroller_index",
+      "backend_app_http_controllers_api_bukucontroller_bukucontroller_show",
+      "backend_app_http_controllers_api_bukucontroller_bukucontroller_store",
+      "backend_app_http_controllers_api_bukucontroller_bukucontroller_update",
+      "backend_app_http_controllers_api_kategoricontroller",
+      "backend_app_http_controllers_api_kategoricontroller_kategoricontroller",
+      "backend_app_http_controllers_api_kategoricontroller_kategoricontroller_index",
+      "backend_app_http_controllers_api_loancontroller",
+      "backend_app_http_controllers_api_loancontroller_loancontroller",
+      "backend_app_http_controllers_api_peminjamancontroller",
+      "backend_app_http_controllers_api_peminjamancontroller_peminjamancontroller",
+      "backend_app_http_controllers_api_usercontroller",
+      "backend_app_http_controllers_api_usercontroller_closure_1",
+      "backend_app_http_controllers_api_usercontroller_usercontroller",
+      "backend_app_http_controllers_api_usercontroller_usercontroller_destroy",
+      "backend_app_http_controllers_api_usercontroller_usercontroller_index",
+      "backend_app_http_controllers_api_usercontroller_usercontroller_show",
+      "backend_app_http_controllers_api_usercontroller_usercontroller_store",
+      "backend_app_http_controllers_api_usercontroller_usercontroller_update",
+      "backend_app_http_controllers_controller",
+      "backend_app_http_controllers_controller_controller",
+      "backend_app_http_middleware_adminmiddleware",
+      "backend_app_http_middleware_adminmiddleware_adminmiddleware",
+      "backend_app_http_middleware_adminmiddleware_adminmiddleware_handle",
+      "backend_public_index",
+      "backend_routes_api",
+      "backend_routes_api_get_user",
+      "backend_routes_web",
+      "backend_routes_web_get",
+      "closure",
+      "illuminate_http_request",
+      "illuminate_support_facades_hash",
+      "illuminate_support_facades_route",
+      "symfony_component_httpfoundation_response"
+    ],
+    "1": [
+      "backend_composer",
+      "backend_composer_autoload",
+      "backend_composer_autoload_dev",
+      "backend_composer_autoload_dev_psr_4",
+      "backend_composer_autoload_psr_4",
+      "backend_composer_description",
+      "backend_composer_extra",
+      "backend_composer_extra_laravel",
+      "backend_composer_keywords",
+      "backend_composer_laravel_dont_discover",
+      "backend_composer_license",
+      "backend_composer_minimum_stability",
+      "backend_composer_name",
+      "backend_composer_prefer_stable",
+      "backend_composer_psr_4_app",
+      "backend_composer_psr_4_database_factories",
+      "backend_composer_psr_4_database_seeders",
+      "backend_composer_psr_4_tests",
+      "backend_composer_require",
+      "backend_composer_require_dev",
+      "backend_composer_require_dev_fakerphp_faker",
+      "backend_composer_require_dev_laravel_pail",
+      "backend_composer_require_dev_laravel_pint",
+      "backend_composer_require_dev_laravel_sail",
+      "backend_composer_require_dev_mockery_mockery",
+      "backend_composer_require_dev_nunomaduro_collision",
+      "backend_composer_require_dev_phpunit_phpunit",
+      "backend_composer_require_laravel_framework",
+      "backend_composer_require_laravel_sanctum",
+      "backend_composer_require_laravel_tinker",
+      "backend_composer_require_php",
+      "backend_composer_schema",
+      "backend_composer_scripts",
+      "backend_composer_scripts_dev",
+      "backend_composer_scripts_post_autoload_dump",
+      "backend_composer_scripts_post_create_project_cmd",
+      "backend_composer_scripts_post_root_package_install",
+      "backend_composer_scripts_post_update_cmd",
+      "backend_composer_type"
+    ],
+    "2": [
+      "backend_database_migrations_0001_01_01_000000_create_users_table",
+      "backend_database_migrations_0001_01_01_000000_create_users_table_closure_1",
+      "backend_database_migrations_0001_01_01_000000_create_users_table_closure_2",
+      "backend_database_migrations_0001_01_01_000000_create_users_table_closure_3",
+      "backend_database_migrations_0001_01_01_000000_create_users_table_down",
+      "backend_database_migrations_0001_01_01_000000_create_users_table_up",
+      "backend_database_migrations_0001_01_01_000001_create_cache_table",
+      "backend_database_migrations_0001_01_01_000001_create_cache_table_closure_1",
+      "backend_database_migrations_0001_01_01_000001_create_cache_table_closure_2",
+      "backend_database_migrations_0001_01_01_000001_create_cache_table_down",
+      "backend_database_migrations_0001_01_01_000001_create_cache_table_up",
+      "backend_database_migrations_0001_01_01_000002_create_jobs_table",
+      "backend_database_migrations_0001_01_01_000002_create_jobs_table_closure_1",
+      "backend_database_migrations_0001_01_01_000002_create_jobs_table_closure_2",
+      "backend_database_migrations_0001_01_01_000002_create_jobs_table_closure_3",
+      "backend_database_migrations_0001_01_01_000002_create_jobs_table_down",
+      "backend_database_migrations_0001_01_01_000002_create_jobs_table_up",
+      "backend_database_migrations_2026_10_16_064639_create_personal_access_tokens_table",
+      "backend_database_migrations_2026_10_16_064639_create_personal_access_tokens_table_closure_1",
+      "backend_database_migrations_2026_10_16_064639_create_personal_access_tokens_table_down",
+      "backend_database_migrations_2026_10_16_064639_create_personal_access_tokens_table_up",
+      "backend_database_migrations_2026_10_16_065747_create_kategoris_table",
+      "backend_database_migrations_2026_10_16_065747_create_kategoris_table_closure_1",
+      "backend_database_migrations_2026_10_16_065747_create_kategoris_table_down",
+      "backend_database_migrations_2026_10_16_065747_create_kategoris_table_up",
+      "backend_database_migrations_2026_10_16_065748_create_bukus_table",
+      "backend_database_migrations_2026_10_16_065748_create_bukus_table_closure_1",
+      "backend_database_migrations_2026_10_16_065748_create_bukus_table_down",
+      "backend_database_migrations_2026_10_16_065748_create_bukus_table_up",
+      "backend_database_migrations_2026_10_16_065749_create_peminjamen_table",
+      "backend_database_migrations_2026_10_16_065749_create_peminjamen_table_closure_1",
+      "backend_database_migrations_2026_10_16_065749_create_peminjamen_table_down",
+      "backend_database_migrations_2026_10_16_065749_create_peminjamen_table_up",
+      "illuminate_database_migrations_migration",
+      "illuminate_database_schema_blueprint",
+      "illuminate_support_facades_schema"
+    ],
+    "3": [
+      "frontend_src_app",
+      "frontend_src_app_app",
+      "frontend_src_components_adminnavbar",
+      "frontend_src_components_adminnavbar_adminnavbar",
+      "frontend_src_components_adminnavbar_menu",
+      "frontend_src_components_style_adminnavbar",
+      "frontend_src_components_style_navbar",
+      "frontend_src_components_usernavbar",
+      "frontend_src_components_usernavbar_menu",
+      "frontend_src_components_usernavbar_navbar",
+      "frontend_src_main",
+      "frontend_src_pages_admin_bookform",
+      "frontend_src_pages_admin_bookform_bookform",
+      "frontend_src_pages_admin_kelolabuku",
+      "frontend_src_pages_admin_kelolabuku_kelolabuku",
+      "frontend_src_pages_admin_kelolapengguna",
+      "frontend_src_pages_admin_kelolapengguna_kelolapengguna",
+      "frontend_src_pages_admin_style_bookform",
+      "frontend_src_pages_admin_style_kelolabuku",
+      "frontend_src_pages_admin_style_kelolapengguna",
+      "frontend_src_pages_auth_login",
+      "frontend_src_pages_auth_login_login",
+      "frontend_src_pages_auth_register",
+      "frontend_src_pages_auth_register_register",
+      "frontend_src_pages_user_detailbuku",
+      "frontend_src_pages_user_detailbuku_detailbuku",
+      "frontend_src_pages_user_katalog",
+      "frontend_src_pages_user_katalog_katalog",
+      "frontend_src_pages_user_style_detailbuku",
+      "frontend_src_pages_user_style_katalog",
+      "ref_react",
+      "ref_react_router_dom"
+    ],
+    "4": [
+      "backend_package",
+      "backend_package_devdependencies",
+      "backend_package_devdependencies_autoprefixer",
+      "backend_package_devdependencies_axios",
+      "backend_package_devdependencies_concurrently",
+      "backend_package_devdependencies_laravel_vite_plugin",
+      "backend_package_devdependencies_postcss",
+      "backend_package_devdependencies_tailwindcss",
+      "backend_package_devdependencies_vite",
+      "backend_package_json_ref_vite",
+      "backend_package_private",
+      "backend_package_scripts",
+      "backend_package_scripts_build",
+      "backend_package_scripts_dev",
+      "backend_package_type",
+      "backend_resources_js_app",
+      "backend_resources_js_bootstrap",
+      "backend_tailwind_config",
+      "backend_vite_config",
+      "frontend_vite_config",
+      "ref_autoprefixer",
+      "ref_axios",
+      "ref_concurrently",
+      "ref_laravel_vite_plugin",
+      "ref_postcss",
+      "ref_tailwindcss",
+      "ref_vite",
+      "ref_vitejs_plugin_react",
+      "tailwindcss"
+    ],
+    "5": [
+      "frontend_eslint_config",
+      "frontend_package",
+      "frontend_package_dependencies",
+      "frontend_package_dependencies_react",
+      "frontend_package_dependencies_react_dom",
+      "frontend_package_dependencies_react_router_dom",
+      "frontend_package_json_ref_vite",
+      "frontend_package_name",
+      "frontend_package_private",
+      "frontend_package_scripts",
+      "frontend_package_scripts_build",
+      "frontend_package_scripts_dev",
+      "frontend_package_scripts_lint",
+      "frontend_package_scripts_preview",
+      "frontend_package_type",
+      "frontend_package_version",
+      "ref_eslint",
+      "ref_eslint_js",
+      "ref_eslint_plugin_react_hooks",
+      "ref_eslint_plugin_react_refresh",
+      "ref_globals",
+      "ref_react_dom",
+      "ref_types_react",
+      "ref_types_react_dom"
+    ],
+    "6": [
+      "backend_app_console_commands_importbuku",
+      "backend_app_console_commands_importbuku_importbuku",
+      "backend_app_console_commands_importbuku_importbuku_handle",
+      "backend_app_http_controllers_api_bukucontroller",
+      "backend_app_http_controllers_api_bukucontroller_closure_1",
+      "backend_app_http_controllers_api_bukucontroller_closure_2",
+      "backend_app_models_buku",
+      "backend_app_models_buku_buku",
+      "backend_app_models_buku_buku_kategori",
+      "backend_app_models_buku_buku_peminjaman",
+      "backend_app_models_kategori",
+      "backend_app_models_kategori_kategori",
+      "backend_app_models_kategori_kategori_buku",
+      "backend_app_models_peminjaman",
+      "backend_app_models_peminjaman_peminjaman",
+      "backend_app_models_peminjaman_peminjaman_buku",
+      "backend_app_models_peminjaman_peminjaman_user",
+      "illuminate_console_command",
+      "illuminate_database_eloquent_model",
+      "illuminate_support_facades_http"
+    ],
+    "7": [
+      "backend_app_models_user",
+      "backend_app_models_user_user",
+      "backend_app_models_user_user_casts",
+      "backend_app_models_user_user_peminjaman",
+      "backend_database_seeders_adminseeder",
+      "backend_database_seeders_adminseeder_adminseeder",
+      "backend_database_seeders_adminseeder_adminseeder_run",
+      "backend_database_seeders_databaseseeder",
+      "backend_database_seeders_databaseseeder_databaseseeder",
+      "backend_database_seeders_databaseseeder_databaseseeder_run",
+      "backend_database_seeders_kategoriseeder",
+      "backend_database_seeders_kategoriseeder_kategoriseeder",
+      "backend_database_seeders_kategoriseeder_kategoriseeder_run",
+      "illuminate_database_console_seeds_withoutmodelevents",
+      "illuminate_database_eloquent_factories_hasfactory",
+      "illuminate_database_seeder",
+      "illuminate_foundation_auth_user",
+      "illuminate_notifications_notifiable"
+    ],
+    "8": [
+      "backend_config_cache",
+      "backend_config_database",
+      "backend_config_session",
+      "backend_database_factories_userfactory",
+      "backend_database_factories_userfactory_closure_1",
+      "backend_database_factories_userfactory_userfactory",
+      "backend_database_factories_userfactory_userfactory_definition",
+      "backend_database_factories_userfactory_userfactory_unverified",
+      "illuminate_database_eloquent_factories_factory",
+      "illuminate_support_str",
+      "static"
+    ],
+    "9": [
+      "frontend_package_devdependencies",
+      "frontend_package_devdependencies_eslint",
+      "frontend_package_devdependencies_eslint_js",
+      "frontend_package_devdependencies_eslint_plugin_react_hooks",
+      "frontend_package_devdependencies_eslint_plugin_react_refresh",
+      "frontend_package_devdependencies_globals",
+      "frontend_package_devdependencies_types_react",
+      "frontend_package_devdependencies_types_react_dom",
+      "frontend_package_devdependencies_vite",
+      "frontend_package_devdependencies_vitejs_plugin_react"
+    ],
+    "10": [
+      "frontend_public_manifest",
+      "frontend_public_manifest_background_color",
+      "frontend_public_manifest_display",
+      "frontend_public_manifest_icons",
+      "frontend_public_manifest_name",
+      "frontend_public_manifest_short_name",
+      "frontend_public_manifest_start_url",
+      "frontend_public_manifest_theme_color"
+    ],
+    "11": [
+      "backend_composer_allow_plugins_pestphp_pest_plugin",
+      "backend_composer_allow_plugins_php_http_discovery",
+      "backend_composer_config",
+      "backend_composer_config_allow_plugins",
+      "backend_composer_config_optimize_autoloader",
+      "backend_composer_config_preferred_install",
+      "backend_composer_config_sort_packages"
+    ],
+    "12": [
+      "backend_bootstrap_app",
+      "backend_bootstrap_app_closure_1",
+      "backend_bootstrap_app_closure_2",
+      "illuminate_foundation_application",
+      "illuminate_foundation_configuration_exceptions",
+      "illuminate_foundation_configuration_middleware"
+    ],
+    "13": [
+      "backend_tests_feature_exampletest",
+      "backend_tests_feature_exampletest_exampletest",
+      "backend_tests_feature_exampletest_exampletest_test_the_application_returns_a_successful_response",
+      "backend_tests_testcase",
+      "backend_tests_testcase_testcase",
+      "illuminate_foundation_testing_testcase"
+    ],
+    "14": [
+      "backend_app_providers_appserviceprovider",
+      "backend_app_providers_appserviceprovider_appserviceprovider",
+      "backend_app_providers_appserviceprovider_appserviceprovider_boot",
+      "backend_app_providers_appserviceprovider_appserviceprovider_register",
+      "illuminate_support_serviceprovider"
+    ],
+    "15": [
+      "backend_config_logging",
+      "monolog_handler_nullhandler",
+      "monolog_handler_streamhandler",
+      "monolog_handler_syslogudphandler",
+      "monolog_processor_psrlogmessageprocessor"
+    ],
+    "16": [
+      "backend_config_sanctum",
+      "illuminate_cookie_middleware_encryptcookies",
+      "illuminate_foundation_http_middleware_validatecsrftoken",
+      "laravel_sanctum_http_middleware_authenticatesession",
+      "laravel_sanctum_sanctum"
+    ],
+    "17": [
+      "backend_routes_console",
+      "backend_routes_console_closure_1",
+      "illuminate_foundation_inspiring",
+      "illuminate_support_facades_artisan"
+    ],
+    "18": [
+      "backend_tests_unit_exampletest",
+      "backend_tests_unit_exampletest_exampletest",
+      "backend_tests_unit_exampletest_exampletest_test_that_true_is_true",
+      "phpunit_framework_testcase"
+    ],
+    "19": [
+      "argvinput",
+      "backend_artisan"
+    ],
+    "20": [
+      "backend_bootstrap_providers"
+    ],
+    "21": [
+      "backend_config_app"
+    ],
+    "22": [
+      "backend_config_auth"
+    ],
+    "23": [
+      "backend_config_cors"
+    ],
+    "24": [
+      "backend_config_filesystems"
+    ],
+    "25": [
+      "backend_config_mail"
+    ],
+    "26": [
+      "backend_config_queue"
+    ],
+    "27": [
+      "backend_config_services"
+    ],
+    "28": [
+      "backend_postcss_config"
+    ],
+    "29": [
+      "backend_resources_views_welcome_blade"
+    ],
+    "30": [
+      "frontend_src_components_protectedroute"
+    ],
+    "31": [
+      "frontend_src_layouts_adminlayout"
+    ],
+    "32": [
+      "frontend_src_layouts_layout"
+    ],
+    "33": [
+      "frontend_src_pages_admin_peminjaman"
+    ],
+    "34": [
+      "frontend_src_pages_admin_pengembalian"
+    ],
+    "35": [
+      "frontend_src_pages_admin_riwayattransaksi"
+    ],
+    "36": [
+      "frontend_src_pages_user_bukudipinjam"
+    ],
+    "37": [
+      "frontend_src_pages_user_riwayatpeminjaman"
+    ]
+  },
+  "cohesion": {
+    "0": 0.06845513413506013,
+    "1": 0.05128205128205128,
+    "2": 0.09365079365079365,
+    "3": 0.13709677419354838,
+    "4": 0.06896551724137931,
+    "5": 0.09782608695652174,
+    "6": 0.13157894736842105,
+    "7": 0.16339869281045752,
+    "8": 0.21818181818181817,
+    "9": 0.2,
+    "10": 0.25,
+    "11": 0.2857142857142857,
+    "12": 0.4666666666666667,
+    "13": 0.4666666666666667,
+    "14": 0.5,
+    "15": 0.4,
+    "16": 0.4,
+    "17": 0.5,
+    "18": 0.6666666666666666,
+    "19": 1.0,
+    "20": 1.0,
+    "21": 1.0,
+    "22": 1.0,
+    "23": 1.0,
+    "24": 1.0,
+    "25": 1.0,
+    "26": 1.0,
+    "27": 1.0,
+    "28": 1.0,
+    "29": 1.0,
+    "30": 1.0,
+    "31": 1.0,
+    "32": 1.0,
+    "33": 1.0,
+    "34": 1.0,
+    "35": 1.0,
+    "36": 1.0,
+    "37": 1.0
+  },
+  "gods": [
+    {
+      "id": "backend_app_http_controllers_controller_controller",
+      "label": "Controller",
+      "degree": 15
+    },
+    {
+      "id": "ref_react_router_dom",
+      "label": "react-router-dom",
+      "degree": 11
+    },
+    {
+      "id": "backend_app_models_user_user",
+      "label": "User",
+      "degree": 10
+    },
+    {
+      "id": "frontend_src_app_app",
+      "label": "App()",
+      "degree": 9
+    },
+    {
+      "id": "backend_app_http_controllers_api_bukucontroller_bukucontroller",
+      "label": "BukuController",
+      "degree": 8
+    },
+    {
+      "id": "backend_app_http_controllers_api_usercontroller_usercontroller",
+      "label": "UserController",
+      "degree": 8
+    },
+    {
+      "id": "backend_composer_require_dev",
+      "label": "require-dev",
+      "degree": 8
+    },
+    {
+      "id": "ref_react",
+      "label": "react",
+      "degree": 8
+    },
+    {
+      "id": "backend_app_http_controllers_api_bookcontroller_bookcontroller",
+      "label": "BookController",
+      "degree": 7
+    },
+    {
+      "id": "backend_app_models_buku_buku",
+      "label": "Buku",
+      "degree": 6
+    }
+  ],
+  "surprises": [
+    {
+      "source": "LoanController",
+      "target": "Controller",
+      "source_files": [
+        "backend/app/Http/Controllers/Api/LoanController.php",
+        "backend/app/Http/Controllers/Controller.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "peripheral node `LoanController` unexpectedly reaches hub `Controller`"
+    },
+    {
+      "source": "PeminjamanController",
+      "target": "Controller",
+      "source_files": [
+        "backend/app/Http/Controllers/Api/PeminjamanController.php",
+        "backend/app/Http/Controllers/Controller.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "peripheral node `PeminjamanController` unexpectedly reaches hub `Controller`"
+    },
+    {
+      "source": "AuthController",
+      "target": "Controller",
+      "source_files": [
+        "backend/app/Http/Controllers/Api/AuthController.php",
+        "backend/app/Http/Controllers/Controller.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "BookController",
+      "target": "Controller",
+      "source_files": [
+        "backend/app/Http/Controllers/Api/BookController.php",
+        "backend/app/Http/Controllers/Controller.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "cross-file semantic connection"
+    },
+    {
+      "source": "BukuController",
+      "target": "Controller",
+      "source_files": [
+        "backend/app/Http/Controllers/Api/BukuController.php",
+        "backend/app/Http/Controllers/Controller.php"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "inherits",
+      "why": "cross-file semantic connection"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `@vitejs/plugin-react` connect `backend/package.json` to `frontend/package.json`?",
+      "why": "High betweenness centrality (0.033) - this node is a cross-community bridge."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `vite`, `autoprefixer`, `concurrently` to the rest of the system?",
+      "why": "7 weakly-connected nodes found - possible documentation gaps or missing edges."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Illuminate\\Http\\Request` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.06845513413506013 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `react-router-dom` connect `App.jsx` to `frontend/package.json`?",
+      "why": "High betweenness centrality (0.024) - this node is a cross-community bridge."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `composer.json` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.05128205128205128 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `Illuminate\\Database\\Schema\\Blueprint` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.09365079365079365 - nodes in this community are weakly interconnected."
+    },
+    {
+      "type": "low_cohesion",
+      "question": "Should `App.jsx` be split into smaller, more focused modules?",
+      "why": "Cohesion score 0.13709677419354838 - nodes in this community are weakly interconnected."
+    }
+  ]
+}
