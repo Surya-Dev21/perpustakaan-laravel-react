@@ -2,7 +2,6 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import './style/AdminNavbar.css';
 
 const MENU = [
-  { to: '/admin/dashboard', label: 'Dashboard' },
   { to: '/admin/buku', label: 'Kelola Buku' },
   { to: '/admin/pengguna', label: 'Kelola Pengguna' },
   { to: '/admin/peminjaman', label: 'Kelola Peminjaman' },
@@ -20,11 +19,6 @@ export default function AdminNavbar() {
 
   return (
     <nav className="admin-navbar">
-      <div className="admin-navbar-brand" onClick={() => navigate('/admin/dashboard')}>
-        <span className="brand-logo">📚</span>
-        <span className="brand-text">Admin Perpus</span>
-      </div>
-
       <div className="admin-navbar-links">
         {MENU.map((m) => (
           <NavLink

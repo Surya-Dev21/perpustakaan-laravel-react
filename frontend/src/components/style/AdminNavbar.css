@@ -6,25 +6,10 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 12px 32px;
+  padding: 12px 48px;
   border-bottom: 1px solid #e2e8f0;
   background-color: #ffffff;
-  font-family: inherit;
-}
-
-.admin-navbar-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 15px;
-  color: #0f172a;
-  white-space: nowrap;
-}
-
-.brand-logo {
-  font-size: 18px;
+  font-family: Arial, sans-serif;
 }
 
 .admin-navbar-links {
