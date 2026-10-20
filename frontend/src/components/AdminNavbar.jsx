@@ -1,7 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { BookOpen, LogOut } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { Button } from './ui/button';
+import './style/AdminNavbar.css';
 
 const MENU = [
   { to: '/admin/buku', label: 'Kelola Buku' },
@@ -20,30 +18,16 @@ export default function AdminNavbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 flex items-center gap-4 border-b bg-background/95 px-6 py-2.5 backdrop-blur">
-      <button
-        type="button"
-        onClick={() => navigate('/admin/dashboard')}
-        className="flex items-center gap-2 whitespace-nowrap font-semibold"
-      >
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-          <BookOpen className="h-4 w-4" />
-        </span>
-        <span className="hidden sm:inline">Admin Perpus</span>
-      </button>
-
-      <div className="flex flex-1 items-center gap-1 overflow-x-auto">
+    <nav className="admin-navbar">
+      <div className="admin-navbar-links">
         {MENU.map((m) => (
           <NavLink
             key={m.to}
             to={m.to}
             className={({ isActive }) =>
-              cn(
-                'whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors',
-                isActive
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              )
+              isActive
+                ? 'admin-navbar-link admin-navbar-link-active'
+                : 'admin-navbar-link'
             }
           >
             {m.label}
@@ -51,10 +35,13 @@ export default function AdminNavbar() {
         ))}
       </div>
 
-      <Button variant="outline" size="sm" onClick={handleLogout} className="shrink-0">
-        <LogOut className="h-4 w-4" />
-        <span className="hidden sm:inline">Logout</span>
-      </Button>
+      <button
+        type="button"
+        className="admin-navbar-logout"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
     </nav>
   );
 }
