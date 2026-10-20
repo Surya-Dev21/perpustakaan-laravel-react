@@ -1,0 +1,170 @@
+.category-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.category-modal-card {
+  background: #ffffff;
+  border-radius: 14px;
+  max-width: 500px;
+  width: 100%;
+  padding: 24px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.category-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.category-modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.category-close-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.category-alert {
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.category-alert.error {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+.category-alert.success {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.category-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.category-form input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13.5px;
+  outline: none;
+}
+
+.category-form input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.category-btn-submit {
+  padding: 9px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.category-btn-cancel {
+  padding: 9px 12px;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.category-list-wrapper {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.category-table th,
+.category-table td {
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.category-table th {
+  background: #f8fafc;
+  color: #475569;
+  font-weight: 600;
+}
+
+.category-table tr:not(:last-child) td {
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.category-name {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.category-book-count {
+  font-size: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.action-btn {
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  margin-left: 6px;
+  font-weight: 600;
+}
+
+.action-btn.edit {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.action-btn.delete {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.category-loading {
+  text-align: center;
+  padding: 24px;
+  color: #64748b;
+  font-size: 13.5px;
+}
