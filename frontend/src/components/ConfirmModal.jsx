@@ -1,31 +1,42 @@
-import './style/ConfirmModal.css';
+import { AlertTriangle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
+import { Button } from './ui/button';
 
-export default function ConfirmModal({ isOpen, title, message, onConfirm, onCancel, confirmText = 'Hapus', isDanger = true }) {
-  if (!isOpen) return null;
-
+export default function ConfirmModal({
+  isOpen,
+  title,
+  message,
+  onConfirm,
+  onCancel,
+  confirmText = 'Hapus',
+  isDanger = true,
+}) {
   return (
-    <div className="confirm-modal-overlay" onClick={onCancel} role="dialog" aria-modal="true">
-      <div className="confirm-modal-card" onClick={(e) => e.stopPropagation()}>
-        <div className="confirm-modal-header">
-          <div className={`confirm-modal-icon ${isDanger ? 'confirm-modal-icon-danger' : ''}`}>
-            ⚠️
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onCancel()}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
+            <AlertTriangle className="h-5 w-5 text-amber-600" />
           </div>
-          <h3>{title}</h3>
-        </div>
-        <p className="confirm-modal-message">{message}</p>
-        <div className="confirm-modal-actions">
-          <button type="button" className="confirm-modal-btn cancel" onClick={onCancel}>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{message}</DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={onCancel}>
             Batal
-          </button>
-          <button
-            type="button"
-            className={`confirm-modal-btn ${isDanger ? 'danger' : 'primary'}`}
-            onClick={onConfirm}
-          >
+          </Button>
+          <Button variant={isDanger ? 'destructive' : 'default'} onClick={onConfirm}>
             {confirmText}
-          </button>
-        </div>
-      </div>
-    </div>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

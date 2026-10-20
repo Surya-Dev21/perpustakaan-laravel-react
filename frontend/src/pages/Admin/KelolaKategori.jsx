@@ -1,7 +1,25 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { Check, Pencil, Trash2 } from 'lucide-react';
 import { categoryService } from '../../services/categoryService.js';
 import ConfirmModal from '../../components/ConfirmModal.jsx';
-import './style/KelolaKategori.css';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '../../components/ui/table';
+import { Badge } from '../../components/ui/badge';
 
 export default function KelolaKategori({ isOpen, onClose, onCategoryUpdated }) {
   const [categories, setCategories] = useState([]);
@@ -27,13 +45,12 @@ export default function KelolaKategori({ isOpen, onClose, onCategoryUpdated }) {
   };
 
   useEffect(() => {
-    if (isOpen) {
-      fetchCategories();
-      setInputNama('');
-      setEditingCategory(null);
-      setError('');
-      setSuccess('');
-    }
+    if (!isOpen) return;
+    fetchCategories();
+    setInputNama('');
+    setEditingCategory(null);
+    setError('');
+    setSuccess('');
   }, [isOpen]);
 
   const handleSubmit = async (e) => {
@@ -54,7 +71,7 @@ export default function KelolaKategori({ isOpen, onClose, onCategoryUpdated }) {
       setInputNama('');
       setEditingCategory(null);
       fetchCategories();
-      if (onCategoryUpdated) onCategoryUpdated();
+      onCategoryUpdated?.();
     } catch (err) {
       setError(err.message || 'Terjadi kesalahan');
     }
@@ -67,11 +84,6 @@ export default function KelolaKategori({ isOpen, onClose, onCategoryUpdated }) {
     setSuccess('');
   };
 
-  const handleCancelEdit = () => {
-    setEditingCategory(null);
-    setInputNama('');
-  };
-
   const handleDelete = async () => {
     if (!deletingCategory) return;
     setError('');
@@ -81,92 +93,121 @@ export default function KelolaKategori({ isOpen, onClose, onCategoryUpdated }) {
       setSuccess(`Kategori "${deletingCategory.nama_kategori}" berhasil dihapus`);
       setDeletingCategory(null);
       fetchCategories();
-      if (onCategoryUpdated) onCategoryUpdated();
+      onCategoryUpdated?.();
     } catch (err) {
       setError(err.message || 'Gagal menghapus kategori');
       setDeletingCategory(null);
     }
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="category-modal-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="category-modal-card" onClick={(e) => e.stopPropagation()}>
-        <div className="category-modal-header">
-          <h3>Kelola Kategori Buku</h3>
-          <button className="category-close-btn" onClick={onClose}>✕</button>
-        </div>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Kelola Kategori Buku</DialogTitle>
+          <DialogDescription>
+            Tambah, ubah, atau hapus kategori. Kategori yang masih dipakai buku tidak dapat dihapus.
+          </DialogDescription>
+        </DialogHeader>
 
-        {error && <div className="category-alert error">{error}</div>}
-        {success && <div className="category-alert success">{success}</div>}
+        {error && (
+          <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+            {success}
+          </div>
+        )}
 
-        <form className="category-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <Input
             placeholder="Nama kategori baru..."
             value={inputNama}
             onChange={(e) => setInputNama(e.target.value)}
             required
           />
-          <button type="submit" className="category-btn-submit">
-            {editingCategory ? 'Update' : 'Tambah'}
-          </button>
+          <Button type="submit" className="shrink-0">
+            {editingCategory ? (
+              <>
+                <Check className="h-4 w-4" /> Update
+              </>
+            ) : (
+              'Tambah'
+            )}
+          </Button>
           {editingCategory && (
-            <button type="button" className="category-btn-cancel" onClick={handleCancelEdit}>
+            <Button
+              type="button"
+              variant="outline"
+              className="shrink-0"
+              onClick={() => {
+                setEditingCategory(null);
+                setInputNama('');
+              }}
+            >
               Batal
-            </button>
+            </Button>
           )}
         </form>
 
-        <div className="category-list-wrapper">
-          {loading ? (
-            <p className="category-loading">Memuat kategori...</p>
-          ) : (
-            <table className="category-table">
-              <thead>
-                <tr>
-                  <th>Nama Kategori</th>
-                  <th>Total Buku</th>
-                  <th style={{ textAlign: 'right' }}>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {categories.length > 0 ? (
-                  categories.map((k) => (
-                    <tr key={k.id}>
-                      <td className="category-name">{k.nama_kategori}</td>
-                      <td>
-                        <span className="category-book-count">{k.total_buku || 0} buku</span>
-                      </td>
-                      <td style={{ textAlign: 'right' }}>
-                        <button
-                          type="button"
-                          className="action-btn edit"
+        <div className="max-h-72 overflow-auto rounded-lg border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nama Kategori</TableHead>
+                <TableHead>Total Buku</TableHead>
+                <TableHead className="text-right">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="py-8 text-center text-muted-foreground">
+                    Memuat kategori...
+                  </TableCell>
+                </TableRow>
+              ) : categories.length > 0 ? (
+                categories.map((k) => (
+                  <TableRow key={k.id}>
+                    <TableCell className="font-medium">{k.nama_kategori}</TableCell>
+                    <TableCell>
+                      <Badge variant="secondary">{k.total_buku || 0} buku</Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7"
+                          title="Edit kategori"
                           onClick={() => handleStartEdit(k)}
                         >
-                          Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="action-btn delete"
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-7 w-7 text-destructive hover:text-destructive"
+                          title="Hapus kategori"
                           onClick={() => setDeletingCategory(k)}
                         >
-                          Hapus
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="3" style={{ textAlign: 'center', padding: '20px' }}>
-                      Belum ada kategori tersedia.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          )}
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={3} className="py-8 text-center text-muted-foreground">
+                    Belum ada kategori tersedia.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
 
         <ConfirmModal
@@ -177,7 +218,7 @@ export default function KelolaKategori({ isOpen, onClose, onCategoryUpdated }) {
           onCancel={() => setDeletingCategory(null)}
           confirmText="Ya, Hapus"
         />
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,9 +1,33 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save } from 'lucide-react';
 import { bookService } from '../../services/bookService.js';
 import { categoryService } from '../../services/categoryService.js';
 import AdminNavbar from '../../components/AdminNavbar.jsx';
-import '../Admin/style/BookForm.css';
+import { Button } from '../../components/ui/button';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import { Textarea } from '../../components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select';
+
+const EMPTY_FORM = {
+  isbn: '',
+  judul: '',
+  penulis: '',
+  penerbit: '',
+  tahun_terbit: new Date().getFullYear(),
+  deskripsi: '',
+  kategori_id: '',
+  stok: '1',
+  cover_id: '',
+};
 
 export default function BookForm() {
   const navigate = useNavigate();
@@ -14,44 +38,34 @@ export default function BookForm() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-
-  const [form, setForm] = useState({
-    isbn: '',
-    judul: '',
-    penulis: '',
-    penerbit: '',
-    tahun_terbit: new Date().getFullYear(),
-    deskripsi: '',
-    kategori_id: '',
-    stok: '1',
-    cover_id: '',
-  });
+  const [form, setForm] = useState(EMPTY_FORM);
 
   useEffect(() => {
-    categoryService.getCategories()
+    categoryService
+      .getCategories()
       .then((res) => setCategories(res.data || []))
       .catch(() => setError('Gagal memuat kategori.'));
 
-    if (isEdit) {
-      setLoading(true);
-      bookService.getBookById(id)
-        .then((res) => {
-          const b = res.data;
-          setForm({
-            isbn: b.isbn || '',
-            judul: b.judul || '',
-            penulis: b.penulis || '',
-            penerbit: b.penerbit || '',
-            tahun_terbit: b.tahun_terbit || '',
-            deskripsi: b.deskripsi || '',
-            kategori_id: String(b.kategori_id || ''),
-            stok: String(b.stok ?? 0),
-            cover_id: b.cover_id || '',
-          });
-        })
-        .catch((err) => setError(err.message || 'Gagal memuat data buku.'))
-        .finally(() => setLoading(false));
-    }
+    if (!isEdit) return;
+    setLoading(true);
+    bookService
+      .getBookById(id)
+      .then((res) => {
+        const b = res.data;
+        setForm({
+          isbn: b.isbn || '',
+          judul: b.judul || '',
+          penulis: b.penulis || '',
+          penerbit: b.penerbit || '',
+          tahun_terbit: b.tahun_terbit || '',
+          deskripsi: b.deskripsi || '',
+          kategori_id: String(b.kategori_id || ''),
+          stok: String(b.stok ?? 0),
+          cover_id: b.cover_id || '',
+        });
+      })
+      .catch((err) => setError(err.message || 'Gagal memuat data buku.'))
+      .finally(() => setLoading(false));
   }, [id, isEdit]);
 
   const handleChange = (e) => {
@@ -63,9 +77,12 @@ export default function BookForm() {
     e.preventDefault();
     setError('');
 
-    // Validasi klien
     if (Number(form.stok) < 0) {
       setError('Stok tidak boleh bernilai negatif.');
+      return;
+    }
+    if (!form.kategori_id) {
+      setError('Kategori buku wajib dipilih.');
       return;
     }
 
@@ -94,42 +111,46 @@ export default function BookForm() {
   };
 
   return (
-    <div className="book-form-page">
+    <div className="min-h-screen bg-background">
       <AdminNavbar />
 
-      <main className="book-form-wrapper">
-        <div className="book-form-header">
+      <main className="mx-auto max-w-4xl px-6 py-8">
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1>{isEdit ? 'Ubah Informasi Buku' : 'Tambah Buku Baru'}</h1>
-            <p>
+            <h1 className="text-2xl font-bold">{isEdit ? 'Ubah Informasi Buku' : 'Tambah Buku Baru'}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
               {isEdit
                 ? 'Perbarui metadata buku, kuantitas stok, dan kategori.'
                 : 'Lengkapi informasi metadata buku ke dalam katalog perpustakaan.'}
             </p>
           </div>
-          <button
-            type="button"
-            className="book-form-cancel"
-            onClick={() => navigate('/admin/buku')}
-          >
-            ← Kembali ke Daftar
-          </button>
-        </div>
+          <Button variant="outline" onClick={() => navigate('/admin/buku')}>
+            <ArrowLeft className="h-4 w-4" />
+            Kembali
+          </Button>
+        </header>
 
-        {error && <div className="book-form-error">{error}</div>}
+        {error && (
+          <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+            {error}
+          </div>
+        )}
 
         {loading ? (
-          <div className="book-form-loading">Memuat data buku...</div>
+          <Card>
+            <CardContent className="p-12 text-center text-muted-foreground">Memuat data buku...</CardContent>
+          </Card>
         ) : (
-          <form className="book-form-card" onSubmit={handleSubmit}>
-            <section className="book-form-section">
-              <h2>Metadata Buku</h2>
-              <p>Informasi identitas publikasi buku perpustakaan.</p>
-
-              <div className="book-form-grid">
-                <div className="book-form-group">
-                  <label htmlFor="isbn">Nomor ISBN *</label>
-                  <input
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Metadata Buku</CardTitle>
+                <CardDescription>Informasi identitas publikasi buku perpustakaan.</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="isbn">Nomor ISBN *</Label>
+                  <Input
                     id="isbn"
                     name="isbn"
                     placeholder="Contoh: 978-602-03-8591-4"
@@ -139,9 +160,9 @@ export default function BookForm() {
                   />
                 </div>
 
-                <div className="book-form-group">
-                  <label htmlFor="judul">Judul Buku *</label>
-                  <input
+                <div className="space-y-1.5">
+                  <Label htmlFor="judul">Judul Buku *</Label>
+                  <Input
                     id="judul"
                     name="judul"
                     placeholder="Masukkan judul buku lengkap"
@@ -151,9 +172,9 @@ export default function BookForm() {
                   />
                 </div>
 
-                <div className="book-form-group">
-                  <label htmlFor="penulis">Nama Penulis *</label>
-                  <input
+                <div className="space-y-1.5">
+                  <Label htmlFor="penulis">Nama Penulis *</Label>
+                  <Input
                     id="penulis"
                     name="penulis"
                     placeholder="Contoh: Andrea Hirata"
@@ -163,9 +184,9 @@ export default function BookForm() {
                   />
                 </div>
 
-                <div className="book-form-group">
-                  <label htmlFor="penerbit">Penerbit *</label>
-                  <input
+                <div className="space-y-1.5">
+                  <Label htmlFor="penerbit">Penerbit *</Label>
+                  <Input
                     id="penerbit"
                     name="penerbit"
                     placeholder="Contoh: Gramedia Pustaka Utama"
@@ -175,9 +196,9 @@ export default function BookForm() {
                   />
                 </div>
 
-                <div className="book-form-group">
-                  <label htmlFor="tahun_terbit">Tahun Terbit *</label>
-                  <input
+                <div className="space-y-1.5">
+                  <Label htmlFor="tahun_terbit">Tahun Terbit *</Label>
+                  <Input
                     id="tahun_terbit"
                     name="tahun_terbit"
                     type="number"
@@ -190,34 +211,36 @@ export default function BookForm() {
                   />
                 </div>
 
-                <div className="book-form-group">
-                  <label htmlFor="kategori_id">Kategori Buku *</label>
-                  <select
-                    id="kategori_id"
-                    name="kategori_id"
+                <div className="space-y-1.5">
+                  <Label htmlFor="kategori_id">Kategori Buku *</Label>
+                  <Select
                     value={form.kategori_id}
-                    onChange={handleChange}
-                    required
+                    onValueChange={(v) => setForm({ ...form, kategori_id: v })}
                   >
-                    <option value="">Pilih kategori buku</option>
-                    {categories.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.nama_kategori}
-                      </option>
-                    ))}
-                  </select>
+                    <SelectTrigger id="kategori_id">
+                      <SelectValue placeholder="Pilih kategori buku" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((k) => (
+                        <SelectItem key={k.id} value={String(k.id)}>
+                          {k.nama_kategori}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              </div>
-            </section>
+              </CardContent>
+            </Card>
 
-            <section className="book-form-section">
-              <h2>Stok & Sinopsis</h2>
-              <p>Kelola jumlah fisik buku yang tersedia dan ringkasan isi buku.</p>
-
-              <div className="book-form-grid">
-                <div className="book-form-group">
-                  <label htmlFor="stok">Jumlah Stok Fisik *</label>
-                  <input
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base">Stok & Sinopsis</CardTitle>
+                <CardDescription>Kelola jumlah fisik buku yang tersedia dan ringkasan isi buku.</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="stok">Jumlah Stok Fisik *</Label>
+                  <Input
                     id="stok"
                     name="stok"
                     type="number"
@@ -229,9 +252,9 @@ export default function BookForm() {
                   />
                 </div>
 
-                <div className="book-form-group">
-                  <label htmlFor="cover_id">Cover ID (Opsional)</label>
-                  <input
+                <div className="space-y-1.5">
+                  <Label htmlFor="cover_id">Cover ID (Opsional)</Label>
+                  <Input
                     id="cover_id"
                     name="cover_id"
                     type="number"
@@ -241,36 +264,28 @@ export default function BookForm() {
                   />
                 </div>
 
-                <div className="book-form-group book-form-full">
-                  <label htmlFor="deskripsi">Sinopsis / Ringkasan Buku</label>
-                  <textarea
+                <div className="space-y-1.5 sm:col-span-2">
+                  <Label htmlFor="deskripsi">Sinopsis / Ringkasan Buku</Label>
+                  <Textarea
                     id="deskripsi"
                     name="deskripsi"
-                    rows="4"
+                    rows={4}
                     placeholder="Tuliskan sinopsis buku secara singkat..."
                     value={form.deskripsi}
                     onChange={handleChange}
                   />
                 </div>
-              </div>
-            </section>
+              </CardContent>
+            </Card>
 
-            <div className="book-form-actions">
-              <button
-                type="button"
-                className="book-form-cancel"
-                onClick={() => navigate('/admin/buku')}
-                disabled={submitting}
-              >
+            <div className="flex justify-end gap-2 border-t pt-4">
+              <Button type="button" variant="outline" onClick={() => navigate('/admin/buku')} disabled={submitting}>
                 Batal
-              </button>
-              <button
-                type="submit"
-                className="book-form-submit"
-                disabled={submitting}
-              >
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                <Save className="h-4 w-4" />
                 {submitting ? 'Menyimpan...' : isEdit ? 'Simpan Perubahan' : 'Tambah Buku'}
-              </button>
+              </Button>
             </div>
           </form>
         )}

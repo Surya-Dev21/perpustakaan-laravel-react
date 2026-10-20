@@ -1,9 +1,71 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AlertTriangle, BookMarked, Boxes, Layers, Library, Plus, Repeat2, Tags } from 'lucide-react';
 import { bookService } from '../../services/bookService.js';
 import AdminNavbar from '../../components/AdminNavbar.jsx';
 import KelolaKategori from './KelolaKategori.jsx';
-import './style/Dashboard.css';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent } from '../../components/ui/card';
+
+const METRICS = [
+  {
+    key: 'total_judul_buku',
+    label: 'Total Judul Buku',
+    sub: 'Katalog judul terdaftar',
+    icon: Library,
+    iconClass: 'bg-blue-50 text-blue-600',
+  },
+  {
+    key: 'total_stok_buku',
+    label: 'Total Eksemplar Stok',
+    sub: 'Fisik buku keseluruhan',
+    icon: Boxes,
+    iconClass: 'bg-emerald-50 text-emerald-600',
+  },
+  {
+    key: 'total_buku_dipinjam',
+    label: 'Sedang Dipinjam',
+    sub: 'Sedang berada di peminjam',
+    icon: Repeat2,
+    iconClass: 'bg-purple-50 text-purple-600',
+  },
+  {
+    key: 'total_kategori',
+    label: 'Total Kategori',
+    sub: 'Klasifikasi subjek buku',
+    icon: Tags,
+    iconClass: 'bg-amber-50 text-amber-600',
+  },
+  {
+    key: 'stok_habis',
+    label: 'Stok Habis / Kritis',
+    sub: 'Perlu penambahan stok fisik',
+    icon: AlertTriangle,
+    iconClass: 'bg-red-50 text-red-600',
+    valueClass: 'text-red-600',
+  },
+];
+
+const QUICK_NAV = [
+  {
+    title: 'Kelola Katalog Buku',
+    desc: 'Lihat seluruh koleksi buku, atur stok, filter kategori, atau ubah metadata buku.',
+    to: '/admin/buku',
+    icon: BookMarked,
+  },
+  {
+    title: 'Klasifikasi Kategori',
+    desc: 'Tambah kategori baru atau perbarui nama kategori untuk pengelompokan buku yang rapi.',
+    category: true,
+    icon: Layers,
+  },
+  {
+    title: 'Manajemen Pengguna',
+    desc: 'Pantau akun anggota perpustakaan dan atur izin akses pengguna aplikasi.',
+    to: '/admin/pengguna',
+    icon: Library,
+  },
+];
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -37,119 +99,81 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="admin-dashboard-page">
+    <div className="min-h-screen bg-background">
       <AdminNavbar />
 
-      <main className="admin-dashboard-container">
-        <header className="admin-dashboard-header">
+      <main className="mx-auto max-w-7xl px-6 py-8">
+        <header className="mb-8 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1>Dashboard Perpustakaan</h1>
-            <p>Ringkasan statistik koleksi buku, sirkulasi peminjaman, dan status persediaan katalog.</p>
+            <h1 className="text-2xl font-bold sm:text-3xl">Dashboard Perpustakaan</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Ringkasan statistik koleksi buku, sirkulasi peminjaman, dan status persediaan katalog.
+            </p>
           </div>
 
-          <div className="admin-dashboard-quick-actions">
-            <button
-              type="button"
-              className="dash-action-btn primary"
-              onClick={() => navigate('/admin/buku/tambah')}
-            >
-              ➕ Tambah Buku Baru
-            </button>
-            <button
-              type="button"
-              className="dash-action-btn secondary"
-              onClick={() => setIsCategoryModalOpen(true)}
-            >
-              🏷️ Kelola Kategori
-            </button>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate('/admin/buku/tambah')}>
+              <Plus className="h-4 w-4" />
+              Tambah Buku
+            </Button>
+            <Button variant="outline" onClick={() => setIsCategoryModalOpen(true)}>
+              <Tags className="h-4 w-4" />
+              Kelola Kategori
+            </Button>
           </div>
         </header>
 
-        {error && <div className="dashboard-alert-error">{error}</div>}
-
-        {/* Metric Cards */}
-        <section className="dashboard-metrics-grid">
-          <div className="metric-card">
-            <div className="metric-icon blue">📚</div>
-            <div className="metric-info">
-              <span className="metric-label">Total Judul Buku</span>
-              <strong className="metric-value">
-                {loading ? '...' : stats.total_judul_buku}
-              </strong>
-              <span className="metric-sub">Katalog judul terdaftar</span>
-            </div>
+        {error && (
+          <div className="mb-6 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+            {error}
           </div>
+        )}
 
-          <div className="metric-card">
-            <div className="metric-icon green">📦</div>
-            <div className="metric-info">
-              <span className="metric-label">Total Eksemplar Stok</span>
-              <strong className="metric-value">
-                {loading ? '...' : stats.total_stok_buku}
-              </strong>
-              <span className="metric-sub">Fisik buku keseluruhan</span>
-            </div>
-          </div>
-
-          <div className="metric-card">
-            <div className="metric-icon purple">🔄</div>
-            <div className="metric-info">
-              <span className="metric-label">Sedang Dipinjam</span>
-              <strong className="metric-value">
-                {loading ? '...' : stats.total_buku_dipinjam}
-              </strong>
-              <span className="metric-sub">Sedang berada di peminjam</span>
-            </div>
-          </div>
-
-          <div className="metric-card">
-            <div className="metric-icon amber">🏷️</div>
-            <div className="metric-info">
-              <span className="metric-label">Total Kategori</span>
-              <strong className="metric-value">
-                {loading ? '...' : stats.total_kategori}
-              </strong>
-              <span className="metric-sub">Klasifikasi subjek buku</span>
-            </div>
-          </div>
-
-          <div className="metric-card clickable" onClick={() => navigate('/admin/buku?status=habis')}>
-            <div className="metric-icon red">⚠️</div>
-            <div className="metric-info">
-              <span className="metric-label">Stok Habis / Kritis</span>
-              <strong className="metric-value text-red">
-                {loading ? '...' : stats.stok_habis}
-              </strong>
-              <span className="metric-sub">Perlu penambahan stok fisik</span>
-            </div>
-          </div>
+        <section className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          {METRICS.map(({ key, label, sub, icon: Icon, iconClass, valueClass }) => {
+            const clickable = key === 'stok_habis';
+            return (
+              <Card
+                key={key}
+                onClick={() => clickable && navigate('/admin/buku?status=habis')}
+                className={clickable ? 'cursor-pointer transition hover:-translate-y-0.5 hover:shadow-md' : ''}
+              >
+                <CardContent className="flex items-center gap-4 p-5">
+                  <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${iconClass}`}>
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+                    <p className={`text-2xl font-bold ${valueClass || ''}`}>
+                      {loading ? '…' : stats[key]}
+                    </p>
+                    <p className="truncate text-[11px] text-muted-foreground/80">{sub}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </section>
 
-        {/* Quick Navigation Cards */}
-        <section className="dashboard-quick-nav-grid">
-          <div className="quick-nav-card" onClick={() => navigate('/admin/buku')}>
-            <div className="quick-nav-header">
-              <h3>Kelola Katalog Buku</h3>
-              <span>→</span>
-            </div>
-            <p>Lihat seluruh koleksi buku, atur stok, filter kategori, atau ubah metadata buku.</p>
-          </div>
-
-          <div className="quick-nav-card" onClick={() => setIsCategoryModalOpen(true)}>
-            <div className="quick-nav-header">
-              <h3>Klasifikasi Kategori</h3>
-              <span>→</span>
-            </div>
-            <p>Tambah kategori baru atau perbarui nama kategori untuk pengelompokan buku yang rapi.</p>
-          </div>
-
-          <div className="quick-nav-card" onClick={() => navigate('/admin/pengguna')}>
-            <div className="quick-nav-header">
-              <h3>Manajemen Pengguna</h3>
-              <span>→</span>
-            </div>
-            <p>Pantau akun anggota perpustakaan dan atur izin akses pengguna aplikasi.</p>
-          </div>
+        <section className="grid gap-4 md:grid-cols-3">
+          {QUICK_NAV.map(({ title, desc, to, category, icon: Icon }) => (
+            <Card
+              key={title}
+              onClick={() => (category ? setIsCategoryModalOpen(true) : navigate(to))}
+              className="group cursor-pointer transition hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
+              <CardContent className="p-6">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <span className="text-primary transition-transform group-hover:translate-x-1">→</span>
+                </div>
+                <h3 className="text-base font-semibold">{title}</h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">{desc}</p>
+              </CardContent>
+            </Card>
+          ))}
         </section>
       </main>
 

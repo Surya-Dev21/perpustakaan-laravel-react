@@ -1,116 +1,130 @@
 import { useState } from 'react';
-import './style/BookDetailModal.css';
+import { Badge } from '../../components/ui/badge';
+import { Button } from '../../components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog';
+import { cn } from '../../lib/utils';
+
+function Field({ label, children, className }) {
+  return (
+    <div className={cn('flex flex-col gap-1', className)}>
+      <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
+      <span className="text-sm font-medium text-foreground">{children}</span>
+    </div>
+  );
+}
 
 export default function BookDetailModal({ book, isOpen, onClose }) {
   const [activeTab, setActiveTab] = useState('info');
-
-  if (!isOpen || !book) return null;
+  const isAvailable = (book?.status_ketersediaan || 'Tersedia') === 'Tersedia';
 
   return (
-    <div className="book-detail-overlay" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="book-detail-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="book-detail-header">
-          <div>
-            <span className="book-detail-category-tag">{book.kategori || 'Umum'}</span>
-            <h2>{book.judul}</h2>
-            <p className="book-detail-author">Oleh <strong>{book.penulis}</strong></p>
-          </div>
-          <button className="book-detail-close-btn" onClick={onClose} aria-label="Tutup">
-            ✕
-          </button>
-        </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          setActiveTab('info');
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className="max-w-2xl">
+        {book && (
+          <>
+            <DialogHeader>
+              <Badge variant="secondary" className="w-fit uppercase">
+                {book.kategori || 'Umum'}
+              </Badge>
+              <DialogTitle className="pr-8">{book.judul}</DialogTitle>
+              <DialogDescription>
+                Oleh <span className="font-semibold text-foreground">{book.penulis}</span>
+              </DialogDescription>
+            </DialogHeader>
 
-        <div className="book-detail-tabs">
-          <button
-            className={`book-detail-tab ${activeTab === 'info' ? 'active' : ''}`}
-            onClick={() => setActiveTab('info')}
-          >
-            Informasi Buku
-          </button>
-          <button
-            className={`book-detail-tab ${activeTab === 'pinjam' ? 'active' : ''}`}
-            onClick={() => setActiveTab('pinjam')}
-          >
-            Status Peminjaman ({book.peminjaman_aktif?.length || 0})
-          </button>
-        </div>
-
-        <div className="book-detail-body">
-          {activeTab === 'info' && (
-            <div className="book-detail-grid">
-              <div className="book-detail-item">
-                <span className="label">ISBN</span>
-                <span className="value">{book.isbn}</span>
-              </div>
-              <div className="book-detail-item">
-                <span className="label">Penerbit</span>
-                <span className="value">{book.penerbit}</span>
-              </div>
-              <div className="book-detail-item">
-                <span className="label">Tahun Terbit</span>
-                <span className="value">{book.tahun_terbit}</span>
-              </div>
-              <div className="book-detail-item">
-                <span className="label">Stok Fisik Total</span>
-                <span className="value font-bold">{book.stok} eksemplar</span>
-              </div>
-              <div className="book-detail-item">
-                <span className="label">Stok Tersedia</span>
-                <span className="value font-bold text-success">{book.stok_tersedia ?? book.stok} eksemplar</span>
-              </div>
-              <div className="book-detail-item">
-                <span className="label">Status Ketersediaan</span>
-                <span className={`status-pill ${book.status_ketersediaan === 'Tersedia' ? 'available' : 'empty'}`}>
-                  {book.status_ketersediaan || 'Tersedia'}
-                </span>
-              </div>
-              <div className="book-detail-item full-width">
-                <span className="label">Sinopsis / Deskripsi</span>
-                <p className="book-detail-synopsis">
-                  {book.deskripsi || 'Tidak ada sinopsis atau deskripsi untuk buku ini.'}
-                </p>
-              </div>
+            <div className="flex gap-4 border-b">
+              {[
+                { id: 'info', label: 'Informasi Buku' },
+                { id: 'pinjam', label: `Status Peminjaman (${book.peminjaman_aktif?.length || 0})` },
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  className={cn(
+                    '-mb-px border-b-2 px-1 pb-2 text-sm font-medium transition-colors',
+                    activeTab === tab.id
+                      ? 'border-primary text-primary'
+                      : 'border-transparent text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
-          )}
 
-          {activeTab === 'pinjam' && (
-            <div className="book-detail-loans">
-              {book.peminjaman_aktif && book.peminjaman_aktif.length > 0 ? (
-                <div className="book-loan-table-wrapper">
-                  <table className="book-loan-table">
-                    <thead>
+            {activeTab === 'info' ? (
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="ISBN">{book.isbn}</Field>
+                <Field label="Penerbit">{book.penerbit}</Field>
+                <Field label="Tahun Terbit">{book.tahun_terbit}</Field>
+                <Field label="Stok Fisik Total">{book.stok} eksemplar</Field>
+                <Field label="Stok Tersedia">
+                  <span className="text-emerald-600">{book.stok_tersedia ?? book.stok} eksemplar</span>
+                </Field>
+                <Field label="Status Ketersediaan">
+                  <Badge variant={isAvailable ? 'success' : 'destructive'}>
+                    {book.status_ketersediaan || 'Tersedia'}
+                  </Badge>
+                </Field>
+                <Field label="Sinopsis / Deskripsi" className="col-span-2">
+                  <p className="rounded-lg border bg-muted/40 p-3 text-sm font-normal leading-relaxed text-muted-foreground">
+                    {book.deskripsi || 'Tidak ada sinopsis atau deskripsi untuk buku ini.'}
+                  </p>
+                </Field>
+              </div>
+            ) : (
+              <div className="rounded-lg border">
+                {book.peminjaman_aktif?.length > 0 ? (
+                  <table className="w-full text-sm">
+                    <thead className="bg-muted/50 text-left text-xs uppercase text-muted-foreground">
                       <tr>
-                        <th>Peminjam</th>
-                        <th>Tanggal Pinjam</th>
-                        <th>Batas Kembali</th>
+                        <th className="px-4 py-2">Peminjam</th>
+                        <th className="px-4 py-2">Tanggal Pinjam</th>
+                        <th className="px-4 py-2">Batas Kembali</th>
                       </tr>
                     </thead>
                     <tbody>
                       {book.peminjaman_aktif.map((p) => (
-                        <tr key={p.id}>
-                          <td>{p.user_nama}</td>
-                          <td>{p.tgl_peminjaman}</td>
-                          <td>{p.batas_peminjaman}</td>
+                        <tr key={p.id} className="border-t">
+                          <td className="px-4 py-2">{p.user_nama}</td>
+                          <td className="px-4 py-2">{p.tgl_peminjaman}</td>
+                          <td className="px-4 py-2">{p.batas_peminjaman}</td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
-                </div>
-              ) : (
-                <div className="book-loan-empty">
-                  <p>Tidak ada peminjaman aktif saat ini untuk buku ini. Seluruh stok fisik tersedia di rak perpustakaan.</p>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+                ) : (
+                  <p className="p-8 text-center text-sm text-muted-foreground">
+                    Tidak ada peminjaman aktif saat ini. Seluruh stok fisik tersedia di rak perpustakaan.
+                  </p>
+                )}
+              </div>
+            )}
 
-        <div className="book-detail-footer">
-          <button type="button" className="book-detail-btn-close" onClick={onClose}>
-            Tutup
-          </button>
-        </div>
-      </div>
-    </div>
+            <DialogFooter>
+              <Button onClick={onClose}>Tutup</Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
