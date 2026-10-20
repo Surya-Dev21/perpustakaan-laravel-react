@@ -4,7 +4,6 @@ import { cn } from '../lib/utils';
 import { Button } from './ui/button';
 
 const MENU = [
-  { to: '/admin/dashboard', label: 'Dashboard' },
   { to: '/admin/buku', label: 'Kelola Buku' },
   { to: '/admin/pengguna', label: 'Kelola Pengguna' },
   { to: '/admin/peminjaman', label: 'Kelola Peminjaman' },

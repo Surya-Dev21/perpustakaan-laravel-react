@@ -30,7 +30,6 @@ import {
 
 export default function KelolaBuku() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
 
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -49,10 +48,10 @@ export default function KelolaBuku() {
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
 
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [editForm, setEditForm] = useState({});
 
-  const fetchCategories = async () => {
+  const loadBooks = async () => {
     try {
       const res = await categoryService.getCategories();
       setCategories(res.data || []);
@@ -76,14 +75,46 @@ export default function KelolaBuku() {
       setBooks(res.data || []);
       if (res.meta) setMeta(res.meta);
     } catch (err) {
-      setError(err.message || 'Gagal mengambil data buku.');
-    } finally {
-      setLoading(false);
+      setError(err.message || 'Tidak bisa terhubung ke server.');
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    const loadData = async () => {
+      try {
+        const [booksRes, categoriesRes] = await Promise.all([
+          fetch(`${API}/books`, {
+            headers: { Accept: 'application/json' },
+          }),
+          fetch(`${API}/categories`, {
+            headers: { Accept: 'application/json' },
+          }),
+        ]);
+
+        const booksData = await booksRes.json();
+        const categoriesData = await categoriesRes.json();
+
+        if (!booksRes.ok) {
+          throw new Error(
+            booksData.message || 'Gagal mengambil data buku.'
+          );
+        }
+
+        if (!categoriesRes.ok) {
+          throw new Error(
+            categoriesData.message || 'Gagal mengambil data kategori.'
+          );
+        }
+
+        setBooks(booksData.data || []);
+        setCategories(categoriesData.data || []);
+        setError('');
+      } catch (err) {
+        setError(err.message || 'Tidak bisa terhubung ke server.');
+      }
+    };
+
+    loadData();
   }, []);
 
   useEffect(() => {
@@ -110,24 +141,28 @@ export default function KelolaBuku() {
   const handleDeleteBook = async () => {
     if (!deletingBook) return;
     setError('');
-    setSuccess('');
-    try {
-      await bookService.deleteBook(deletingBook.id);
-      setSuccess(`Buku "${deletingBook.judul}" berhasil dihapus.`);
-      setDeletingBook(null);
-      fetchBooks();
-    } catch (err) {
-      setError(err.message || 'Gagal menghapus buku.');
-      setDeletingBook(null);
-    }
-  };
 
   const handleOpenDetail = async (bookId) => {
     try {
-      const res = await bookService.getBookById(bookId);
-      setDetailBook(res.data);
-    } catch (err) {
-      setError(err.message || 'Gagal memuat detail buku');
+      const res = await fetch(`${API}/books/${id}`, {
+        method: 'DELETE',
+        headers: { Accept: 'application/json' },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || 'Gagal menghapus data buku.');
+        return;
+      }
+
+      if (editingId === id) {
+        setEditingId(null);
+      }
+
+      await loadBooks();
+    } catch {
+      setError('Tidak bisa terhubung ke server.');
     }
   };
 

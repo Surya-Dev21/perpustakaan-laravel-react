@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save } from 'lucide-react';
@@ -29,11 +30,10 @@ const EMPTY_FORM = {
   cover_id: '',
 };
 
+const API = 'http://localhost:8000/api';
+
 export default function BookForm() {
   const navigate = useNavigate();
-  const { id } = useParams();
-  const isEdit = Boolean(id);
-
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -70,7 +70,6 @@ export default function BookForm() {
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -88,25 +87,33 @@ export default function BookForm() {
 
     setSubmitting(true);
     try {
-      const payload = {
-        ...form,
-        tahun_terbit: Number(form.tahun_terbit),
-        stok: Number(form.stok),
-        kategori_id: Number(form.kategori_id),
-        cover_id: form.cover_id ? Number(form.cover_id) : null,
-      };
+      const res = await fetch(`${API}/books`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          ...form,
+          cover_id: form.cover_id || null,
+        }),
+      });
 
-      if (isEdit) {
-        await bookService.updateBook(id, payload);
-      } else {
-        await bookService.createBook(payload);
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(
+          data.message ||
+          (data.errors
+            ? Object.values(data.errors).flat().join(', ')
+            : 'Gagal menyimpan data buku.')
+        );
+        return;
       }
 
       navigate('/admin/buku');
-    } catch (err) {
-      setError(err.message || 'Gagal menyimpan data buku.');
-    } finally {
-      setSubmitting(false);
+    } catch {
+      setError('Tidak bisa terhubung ke server.');
     }
   };
 
