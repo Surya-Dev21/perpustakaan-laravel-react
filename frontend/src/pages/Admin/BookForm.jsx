@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save } from 'lucide-react';
-import { bookService } from '../../services/bookService.js';
-import { categoryService } from '../../services/categoryService.js';
-import AdminNavbar from '../../components/AdminNavbar.jsx';
+import { bookService } from '../../services/bookService';
+import { categoryService } from '../../services/categoryService';
+import AdminNavbar from '../../components/AdminNavbar';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
