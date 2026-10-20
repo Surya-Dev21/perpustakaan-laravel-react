@@ -1,10 +1,9 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/auth/Login.jsx';
-import Register from './pages/auth/Register.jsx';
-import Dashboard from './pages/Admin/Dashboard.jsx';
-import KelolaBuku from './pages/Admin/KelolaBuku.jsx';
+import Login from './pages/auth/Login.jsx'
+import Register from './pages/Auth/Register.jsx';
+import KelolaBuku from './pages/admin/KelolaBuku.jsx';
 import KelolaPengguna from './pages/Admin/KelolaPengguna.jsx';
-import BookForm from './pages/Admin/BookForm.jsx';
+import BookForm from "./pages/Admin/BookForm.jsx";
 import Katalog from './pages/User/Katalog.jsx';
 import DetailBuku from './pages/User/DetailBuku.jsx';
 
@@ -14,11 +13,8 @@ export default function App() {
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-      <Route path="/admin/dashboard" element={<Dashboard />} />
       <Route path="/admin/buku" element={<KelolaBuku />} />
       <Route path="/admin/buku/tambah" element={<BookForm />} />
-      <Route path="/admin/buku/edit/:id" element={<BookForm />} />
       <Route path="/katalog" element={<Katalog />} />
       <Route path="/buku/:id" element={<DetailBuku />} />
       <Route path="/admin/pengguna" element={<KelolaPengguna />} />
